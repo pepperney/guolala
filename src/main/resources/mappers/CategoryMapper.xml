@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.guolala.zxx.dao.CategoryMapper">
+  <resultMap id="BaseResultMap" type="com.guolala.zxx.entity.model.Category">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="cat_name" jdbcType="VARCHAR" property="catName" />
+    <result column="cat_no" jdbcType="VARCHAR" property="catNo" />
+    <result column="parent_id" jdbcType="INTEGER" property="parentId" />
+    <result column="cat_status" jdbcType="INTEGER" property="catStatus" />
+    <result column="sort_order" jdbcType="INTEGER" property="sortOrder" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+    <result column="deleted" jdbcType="BIT" property="deleted" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_category
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.guolala.zxx.entity.model.Category">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into t_category (cat_name, cat_no, parent_id, 
+      cat_status, sort_order, create_time, 
+      create_by, update_time, update_by, 
+      deleted)
+    values (#{catName,jdbcType=VARCHAR}, #{catNo,jdbcType=VARCHAR}, #{parentId,jdbcType=INTEGER}, 
+      #{catStatus,jdbcType=INTEGER}, #{sortOrder,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{createBy,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, 
+      #{deleted,jdbcType=BIT})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.guolala.zxx.entity.model.Category">
+    update t_category
+    set cat_name = #{catName,jdbcType=VARCHAR},
+      cat_no = #{catNo,jdbcType=VARCHAR},
+      parent_id = #{parentId,jdbcType=INTEGER},
+      cat_status = #{catStatus,jdbcType=INTEGER},
+      sort_order = #{sortOrder,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_by = #{createBy,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_by = #{updateBy,jdbcType=VARCHAR},
+      deleted = #{deleted,jdbcType=BIT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, cat_name, cat_no, parent_id, cat_status, sort_order, create_time, create_by, 
+    update_time, update_by, deleted
+    from t_category
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, cat_name, cat_no, parent_id, cat_status, sort_order, create_time, create_by, 
+    update_time, update_by, deleted
+    from t_category
+    where deleted = 0
+  </select>
+
+
+  <select id="selectCategoryByCatNo" resultMap="BaseResultMap">
+    select id, cat_name, cat_no, parent_id, cat_status, sort_order, create_time, create_by,
+    update_time, update_by, deleted
+    from t_category
+    where cat_no = #{catNo} and deleted = 0
+  </select>
+
+</mapper>

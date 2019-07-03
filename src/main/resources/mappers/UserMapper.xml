@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.guolala.zxx.dao.UserMapper">
+  <resultMap id="BaseResultMap" type="com.guolala.zxx.entity.model.User">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="nick_name" jdbcType="VARCHAR" property="nickName" />
+    <result column="real_name" jdbcType="VARCHAR" property="realName" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="mobile" jdbcType="VARCHAR" property="mobile" />
+    <result column="ident_no" jdbcType="INTEGER" property="identNo" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="user_status" jdbcType="VARCHAR" property="userStatus" />
+    <result column="user_type" jdbcType="VARCHAR" property="userType" />
+    <result column="wx_openid" jdbcType="VARCHAR" property="wxOpenid" />
+    <result column="wx_name" jdbcType="VARCHAR" property="wxName" />
+    <result column="wx_headimage" jdbcType="VARCHAR" property="wxHeadimage" />
+    <result column="invited_by" jdbcType="INTEGER" property="invitedBy" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="update_by" jdbcType="INTEGER" property="updateBy" />
+    <result column="deleted" jdbcType="BIT" property="deleted" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_user
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.guolala.zxx.entity.model.User">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into t_user (nick_name, real_name, `password`, 
+      mobile, ident_no, email, 
+      user_status, user_type, wx_openid, 
+      wx_name, wx_headimage, invited_by, 
+      create_time, create_by, update_time, 
+      update_by, deleted)
+    values (#{nickName,jdbcType=VARCHAR}, #{realName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+      #{mobile,jdbcType=VARCHAR}, #{identNo,jdbcType=INTEGER}, #{email,jdbcType=VARCHAR}, 
+      #{userStatus,jdbcType=VARCHAR}, #{userType,jdbcType=VARCHAR}, #{wxOpenid,jdbcType=VARCHAR}, 
+      #{wxName,jdbcType=VARCHAR}, #{wxHeadimage,jdbcType=VARCHAR}, #{invitedBy,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{updateBy,jdbcType=INTEGER}, #{deleted,jdbcType=BIT})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.guolala.zxx.entity.model.User">
+    update t_user
+    set nick_name = #{nickName,jdbcType=VARCHAR},
+      real_name = #{realName,jdbcType=VARCHAR},
+      `password` = #{password,jdbcType=VARCHAR},
+      mobile = #{mobile,jdbcType=VARCHAR},
+      ident_no = #{identNo,jdbcType=INTEGER},
+      email = #{email,jdbcType=VARCHAR},
+      user_status = #{userStatus,jdbcType=VARCHAR},
+      user_type = #{userType,jdbcType=VARCHAR},
+      wx_openid = #{wxOpenid,jdbcType=VARCHAR},
+      wx_name = #{wxName,jdbcType=VARCHAR},
+      wx_headimage = #{wxHeadimage,jdbcType=VARCHAR},
+      invited_by = #{invitedBy,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_by = #{createBy,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_by = #{updateBy,jdbcType=INTEGER},
+      deleted = #{deleted,jdbcType=BIT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, nick_name, real_name, `password`, mobile, ident_no, email, user_status, 
+    user_type, wx_openid, wx_name, wx_headimage, invited_by, create_time, create_by, 
+    update_time, update_by, deleted
+    from t_user
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, nick_name, real_name, `password`, mobile, ident_no, email, user_status, 
+    user_type, wx_openid, wx_name, wx_headimage, invited_by, create_time, create_by, 
+    update_time, update_by, deleted
+    from t_user
+    where deleted = 0 and user_status = 1
+  </select>
+
+  <select id="selectUser" resultMap="BaseResultMap">
+    select id, nick_name, real_name, `password`, mobile, ident_no, email, user_status,
+    user_type, wx_openid, wx_name, wx_headimage, invited_by
+    from t_user
+    where deleted = 0 and user_status = 1
+    <if test="id != null">
+      and id = #{id}
+    </if>
+    <if test="wxName != null">
+      and wx_name = #{wxName}
+    </if>
+    <if test="nickName != null">
+      and nick_name = #{nickName}
+    </if>
+    <if test="wxName != null">
+      and wx_name = #{wxName}
+    </if>
+    <if test="mobile != null">
+      and mobile = #{mobile}
+    </if>
+    limit 1
+  </select>
+</mapper>

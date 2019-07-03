@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.guolala.zxx.dao.GoodsMapper">
+  <resultMap id="BaseResultMap" type="com.guolala.zxx.entity.model.Goods">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="goods_type" jdbcType="BIT" property="goodsType" />
+    <result column="goods_status" jdbcType="BIT" property="goodsStatus" />
+    <result column="goods_name" jdbcType="VARCHAR" property="goodsName" />
+    <result column="pre_sale_quatity" jdbcType="INTEGER" property="preSaleQuatity" />
+    <result column="cat_no" jdbcType="VARCHAR" property="catNo" />
+    <result column="cat_name" jdbcType="VARCHAR" property="catName" />
+    <result column="goods_price" jdbcType="DECIMAL" property="goodsPrice" />
+    <result column="discount_price" jdbcType="DECIMAL" property="discountPrice" />
+    <result column="goods_title" jdbcType="VARCHAR" property="goodsTitle" />
+    <result column="goods_desc" jdbcType="VARCHAR" property="goodsDesc" />
+    <result column="goods_tags" jdbcType="VARCHAR" property="goodsTags" />
+    <result column="goods_stock" jdbcType="INTEGER" property="goodsStock" />
+    <result column="goods_banners" jdbcType="VARCHAR" property="goodsBanners" />
+    <result column="goods_thumb" jdbcType="VARCHAR" property="goodsThumb" />
+    <result column="sales_quantity" jdbcType="INTEGER" property="salesQuantity" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+    <result column="deleted" jdbcType="BIT" property="deleted" />
+    <result column="goods_detail" jdbcType="LONGVARCHAR" property="goodsDetail" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_goods
+    where id = #{id,jdbcType=INTEGER}  and deleted = 0
+  </delete>
+  <insert id="insert" parameterType="com.guolala.zxx.entity.model.Goods">
+    insert into t_goods (id, goods_type, goods_status, 
+      goods_name, pre_sale_quatity, cat_no, 
+      cat_name, goods_price, discount_price, 
+      goods_title, goods_desc, goods_tags, 
+      goods_stock, goods_banners, goods_thumb,sales_quantity,
+      create_time, create_by, update_time, 
+      update_by, deleted, goods_detail
+      )
+    values (#{id,jdbcType=INTEGER}, #{goodsType,jdbcType=BIT}, #{goodsStatus,jdbcType=BIT}, 
+      #{goodsName,jdbcType=VARCHAR}, #{preSaleQuatity,jdbcType=INTEGER}, #{catNo,jdbcType=VARCHAR}, 
+      #{catName,jdbcType=VARCHAR}, #{goodsPrice,jdbcType=DECIMAL}, #{discountPrice,jdbcType=DECIMAL}, 
+      #{goodsTitle,jdbcType=VARCHAR}, #{goodsDesc,jdbcType=VARCHAR}, #{goodsTags,jdbcType=VARCHAR}, 
+      #{goodsStock,jdbcType=INTEGER}, #{goodsBanners,jdbcType=VARCHAR}, #{goodsThumb,jdbcType=VARCHAR},#{salesQuantity,jdbcType=INTEGER}
+      #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{updateBy,jdbcType=VARCHAR}, #{deleted,jdbcType=BIT}, #{goodsDetail,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.guolala.zxx.entity.model.Goods">
+    update t_goods
+    set goods_type = #{goodsType,jdbcType=BIT},
+      goods_status = #{goodsStatus,jdbcType=BIT},
+      goods_name = #{goodsName,jdbcType=VARCHAR},
+      pre_sale_quatity = #{preSaleQuatity,jdbcType=INTEGER},
+      cat_no = #{catNo,jdbcType=VARCHAR},
+      cat_name = #{catName,jdbcType=VARCHAR},
+      goods_price = #{goodsPrice,jdbcType=DECIMAL},
+      discount_price = #{discountPrice,jdbcType=DECIMAL},
+      goods_title = #{goodsTitle,jdbcType=VARCHAR},
+      goods_desc = #{goodsDesc,jdbcType=VARCHAR},
+      goods_tags = #{goodsTags,jdbcType=VARCHAR},
+      goods_stock = #{goodsStock,jdbcType=INTEGER},
+      goods_banners = #{goodsBanners,jdbcType=VARCHAR},
+      goods_thumb = #{goodsThumb,jdbcType=VARCHAR},
+      sales_quantity = #{salesQuantity,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_by = #{createBy,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_by = #{updateBy,jdbcType=VARCHAR},
+      deleted = #{deleted,jdbcType=BIT},
+      goods_detail = #{goodsDetail,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, goods_type, goods_status, goods_name, pre_sale_quatity, cat_no, cat_name, 
+    goods_price, discount_price, goods_title, goods_desc, goods_tags, goods_stock, goods_banners, 
+    goods_thumb,sales_quantity, create_time, create_by, update_time, update_by, deleted, goods_detail
+    from t_goods
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, goods_type, goods_status, goods_name, pre_sale_quatity, cat_no, cat_name,
+    goods_price, discount_price, goods_title, goods_desc, goods_tags, goods_stock, goods_banners,
+    goods_thumb,sales_quantity, create_time, create_by, update_time, update_by, deleted, goods_detail
+    from t_goods
+  </select>
+
+  <select id="selectGoodsList" resultMap="BaseResultMap">
+    select id, goods_type, goods_status, goods_name, pre_sale_quatity, cat_no, cat_name,
+    goods_price, discount_price, goods_title, goods_desc, goods_tags, goods_stock, goods_banners,
+    goods_thumb, sales_quantity,create_time, create_by, update_time, update_by, deleted, goods_detail
+    from t_goods where deleted = 0
+    <if test="goodsType != null ">
+      and goods_type = #{goodsType}
+    </if>
+    <if test="goodsStatus != null ">
+      and goods_status = #{goodsStatus}
+    </if>
+    <if test="goodsName != null and goodsName != '' ">
+      and goods_name like concat(#{goodsName},'%'})
+    </if>
+    <if test="catNo != null and catNo != '' ">
+      and cat_no = #{catNo}
+    </if>
+    <if test="catName != null and catName != '' ">
+      and cat_name like concat(#{catName},'%'})
+    </if>
+    <if test="goodsTitle != null and goodsTitle != '' ">
+      and goods_title like concat(#{goodsTitle},'%'})
+    </if>
+    <if test="goodsDesc != null and goodsDesc != '' ">
+      and goods_desc like concat(#{goodsDesc},'%'})
+    </if>
+    <if test="goodsTags != null and goodsTags != '' ">
+      and goods_tags like concat(#{goodsTags},'%'})
+    </if>
+    <trim prefix="order by" suffixOverrides=",">
+      <if test="sortByPrice != null and sortByPrice == true">
+        discount_price,
+      </if>
+      <if test="sortBySales != null and sortBySales == true">
+        sales_quantity,
+      </if>
+    </trim>
+  </select>
+</mapper>

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.guolala.zxx.dao.OrderMapper">
+  <resultMap id="BaseResultMap" type="com.guolala.zxx.entity.model.Order">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="order_no" jdbcType="VARCHAR" property="orderNo" />
+    <result column="order_type" jdbcType="BIT" property="orderType" />
+    <result column="total_quantity" jdbcType="INTEGER" property="totalQuantity" />
+    <result column="total_amt" jdbcType="DECIMAL" property="totalAmt" />
+    <result column="order_time" jdbcType="TIMESTAMP" property="orderTime" />
+    <result column="pay_time" jdbcType="TIMESTAMP" property="payTime" />
+    <result column="pay_amt" jdbcType="VARCHAR" property="payAmt" />
+    <result column="order_status" jdbcType="INTEGER" property="orderStatus" />
+    <result column="is_send" jdbcType="BIT" property="isSend" />
+    <result column="send_time" jdbcType="TIMESTAMP" property="sendTime" />
+    <result column="is_receive" jdbcType="BIT" property="isReceive" />
+    <result column="receive_time" jdbcType="TIMESTAMP" property="receiveTime" />
+    <result column="is_comment" jdbcType="BIT" property="isComment" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="user_nick_name" jdbcType="VARCHAR" property="userNickName" />
+    <result column="user_phone" jdbcType="VARCHAR" property="userPhone" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+    <result column="deleted" jdbcType="BIT" property="deleted" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_order
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.guolala.zxx.entity.model.Order">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into t_order (order_no, order_type, total_quantity, 
+      total_amt, order_time, pay_time, 
+      pay_amt, order_status, is_send, 
+      send_time, is_receive, receive_time, 
+      is_comment, user_id, user_nick_name, 
+      user_phone, create_time, create_by, 
+      update_time, update_by, deleted
+      )
+    values (#{orderNo,jdbcType=VARCHAR}, #{orderType,jdbcType=BIT}, #{totalQuantity,jdbcType=INTEGER}, 
+      #{totalAmt,jdbcType=DECIMAL}, #{orderTime,jdbcType=TIMESTAMP}, #{payTime,jdbcType=TIMESTAMP}, 
+      #{payAmt,jdbcType=VARCHAR}, #{orderStatus,jdbcType=INTEGER}, #{isSend,jdbcType=BIT}, 
+      #{sendTime,jdbcType=TIMESTAMP}, #{isReceive,jdbcType=BIT}, #{receiveTime,jdbcType=TIMESTAMP}, 
+      #{isComment,jdbcType=BIT}, #{userId,jdbcType=INTEGER}, #{userNickName,jdbcType=VARCHAR}, 
+      #{userPhone,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, #{deleted,jdbcType=BIT}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.guolala.zxx.entity.model.Order">
+    update t_order
+    set order_no = #{orderNo,jdbcType=VARCHAR},
+      order_type = #{orderType,jdbcType=BIT},
+      total_quantity = #{totalQuantity,jdbcType=INTEGER},
+      total_amt = #{totalAmt,jdbcType=DECIMAL},
+      order_time = #{orderTime,jdbcType=TIMESTAMP},
+      pay_time = #{payTime,jdbcType=TIMESTAMP},
+      pay_amt = #{payAmt,jdbcType=VARCHAR},
+      order_status = #{orderStatus,jdbcType=INTEGER},
+      is_send = #{isSend,jdbcType=BIT},
+      send_time = #{sendTime,jdbcType=TIMESTAMP},
+      is_receive = #{isReceive,jdbcType=BIT},
+      receive_time = #{receiveTime,jdbcType=TIMESTAMP},
+      is_comment = #{isComment,jdbcType=BIT},
+      user_id = #{userId,jdbcType=INTEGER},
+      user_nick_name = #{userNickName,jdbcType=VARCHAR},
+      user_phone = #{userPhone,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_by = #{createBy,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_by = #{updateBy,jdbcType=VARCHAR},
+      deleted = #{deleted,jdbcType=BIT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, order_no, order_type, total_quantity, total_amt, order_time, pay_time, 
+    pay_amt, order_status, is_send, send_time, is_receive, receive_time, is_comment, 
+    user_id, user_nick_name, user_phone, create_time, create_by, update_time, update_by, 
+    deleted
+    from t_order
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, order_no, order_type, total_quantity, total_amt, order_time, pay_time, 
+    pay_amt, order_status, is_send, send_time, is_receive, receive_time, is_comment, 
+    user_id, user_nick_name, user_phone, create_time, create_by, update_time, update_by, 
+    deleted
+    from t_order
+  </select>
+
+
+  <select id="selectOrderInfo" resultMap="BaseResultMap">
+    select id, order_no, order_type, total_quantity, total_amt, order_time, pay_time,
+    pay_amt, order_status, is_send, send_time, is_receive, receive_time, is_comment,
+    user_id, user_nick_name, user_phone, create_time, create_by, update_time, update_by,
+    deleted
+    from t_order
+    where deleted = 0 and order_no = #{orderNo}
+  </select>
+
+  <update id="updateOrderStatus">
+    update t_order
+    set order_status = #{orderStatus}, update_time = NOW(),
+    where order_no = #{orderNo}
+  </update>
+
+</mapper>

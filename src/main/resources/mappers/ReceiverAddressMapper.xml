@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.guolala.zxx.dao.ReceiverAddressMapper">
+  <resultMap id="BaseResultMap" type="com.guolala.zxx.entity.model.ReceiverAddress">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="receiver_name" jdbcType="VARCHAR" property="receiverName" />
+    <result column="receiver_mobile" jdbcType="VARCHAR" property="receiverMobile" />
+    <result column="addr_province" jdbcType="VARCHAR" property="addrProvince" />
+    <result column="addr_city" jdbcType="VARCHAR" property="addrCity" />
+    <result column="addr_district" jdbcType="VARCHAR" property="addrDistrict" />
+    <result column="addr_details" jdbcType="VARCHAR" property="addrDetails" />
+    <result column="zip_code" jdbcType="VARCHAR" property="zipCode" />
+    <result column="is_default" jdbcType="BIT" property="isDefault" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+    <result column="deleted" jdbcType="BIT" property="deleted" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_receiver_address
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.guolala.zxx.entity.model.ReceiverAddress">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into t_receiver_address (user_id, receiver_name, receiver_mobile, 
+      addr_province, addr_city, addr_district, 
+      addr_details, zip_code, is_default, 
+      create_time, create_by, update_time, 
+      update_by, deleted)
+    values (#{userId,jdbcType=INTEGER}, #{receiverName,jdbcType=VARCHAR}, #{receiverMobile,jdbcType=VARCHAR}, 
+      #{addrProvince,jdbcType=VARCHAR}, #{addrCity,jdbcType=VARCHAR}, #{addrDistrict,jdbcType=VARCHAR}, 
+      #{addrDetails,jdbcType=VARCHAR}, #{zipCode,jdbcType=VARCHAR}, #{isDefault,jdbcType=BIT}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{updateBy,jdbcType=VARCHAR}, #{deleted,jdbcType=BIT})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.guolala.zxx.entity.model.ReceiverAddress">
+    update t_receiver_address
+    set user_id = #{userId,jdbcType=INTEGER},
+      receiver_name = #{receiverName,jdbcType=VARCHAR},
+      receiver_mobile = #{receiverMobile,jdbcType=VARCHAR},
+      addr_province = #{addrProvince,jdbcType=VARCHAR},
+      addr_city = #{addrCity,jdbcType=VARCHAR},
+      addr_district = #{addrDistrict,jdbcType=VARCHAR},
+      addr_details = #{addrDetails,jdbcType=VARCHAR},
+      zip_code = #{zipCode,jdbcType=VARCHAR},
+      is_default = #{isDefault,jdbcType=BIT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_by = #{createBy,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_by = #{updateBy,jdbcType=VARCHAR},
+      deleted = #{deleted,jdbcType=BIT}
+    where id = #{id,jdbcType=INTEGER} and user_id = #{userId,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, user_id, receiver_name, receiver_mobile, addr_province, addr_city, addr_district, 
+    addr_details, zip_code, is_default, create_time, create_by, update_time, update_by, 
+    deleted
+    from t_receiver_address
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, user_id, receiver_name, receiver_mobile, addr_province, addr_city, addr_district, 
+    addr_details, zip_code, is_default, create_time, create_by, update_time, update_by, 
+    deleted
+    from t_receiver_address
+  </select>
+
+  <select id="selectAddressByUserId" resultMap="BaseResultMap">
+    select id, user_id, receiver_name, receiver_mobile, addr_province, addr_city, addr_district,
+    addr_details, zip_code, is_default, create_time, create_by, update_time, update_by,
+    deleted
+    from t_receiver_address
+    where deleted = 0 and user_id = #{userId}
+  </select>
+</mapper>

@@ -1,0 +1,49 @@
+server:
+  port: 9012
+  tomcat:
+    uri-encoding: UTF-8
+
+mybatis:
+  mapperLocations: classpath:mappers/*.xml
+  typeAliasesPackage: com.guolala.zxx.model
+
+logging:
+  level:
+    ROOT: WARN
+    org.springframework.boot: INFO
+    org.springframework.web: INFO
+    org.springframework.remoting.support: INFO
+    com.guolala.zxx: DEBUG
+  path: logs
+  config: classpath:config/logback-guolala.xml
+
+spring:
+  application:
+    name: guolala
+
+auth:
+  router:
+    chains:
+      - /**/user/**=sign
+      - /**/order/**=sign,token
+      - /**/file/**=none
+      - /**=none
+
+
+---
+spring:
+  profiles: local
+config:
+  file: classpath:config/config.properties
+logging:
+   path: logs
+
+---
+spring:
+  profiles: online
+config:
+  file: /home/pepper/configs/${spring.application.name}/config.properties
+logging:
+   path: /home/pepper/logs/${spring.application.name}
+
+

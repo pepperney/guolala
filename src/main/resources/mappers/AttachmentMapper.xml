@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.guolala.zxx.dao.AttachmentMapper">
+  <resultMap id="BaseResultMap" type="com.guolala.zxx.entity.model.Attachment">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="biz_type" jdbcType="VARCHAR" property="bizType" />
+    <result column="biz_no" jdbcType="INTEGER" property="bizNo" />
+    <result column="file_id" jdbcType="VARCHAR" property="fileId" />
+    <result column="file_path" jdbcType="VARCHAR" property="filePath" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+    <result column="deleted" jdbcType="BIT" property="deleted" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_attachment
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.guolala.zxx.entity.model.Attachment">
+    insert into t_attachment (id, biz_type, biz_no, 
+      file_id, file_path, create_time, 
+      create_by, update_time, update_by, 
+      deleted)
+    values (#{id,jdbcType=INTEGER}, #{bizType,jdbcType=VARCHAR}, #{bizNo,jdbcType=INTEGER}, 
+      #{fileId,jdbcType=VARCHAR}, #{filePath,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{createBy,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, 
+      #{deleted,jdbcType=BIT})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.guolala.zxx.entity.model.Attachment">
+    update t_attachment
+    set biz_type = #{bizType,jdbcType=VARCHAR},
+      biz_no = #{bizNo,jdbcType=INTEGER},
+      file_id = #{fileId,jdbcType=VARCHAR},
+      file_path = #{filePath,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_by = #{createBy,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_by = #{updateBy,jdbcType=VARCHAR},
+      deleted = #{deleted,jdbcType=BIT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, biz_type, biz_no, file_id, file_path, create_time, create_by, update_time, 
+    update_by, deleted
+    from t_attachment
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, biz_type, biz_no, file_id, file_path, create_time, create_by, update_time, 
+    update_by, deleted
+    from t_attachment
+  </select>
+</mapper>

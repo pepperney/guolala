@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.guolala.zxx.dao.ShopCartMapper">
+  <resultMap id="BaseResultMap" type="com.guolala.zxx.entity.model.ShopCart">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="goods_id" jdbcType="INTEGER" property="goodsId" />
+    <result column="quantity" jdbcType="INTEGER" property="quantity" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+    <result column="deleted" jdbcType="BIT" property="deleted" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_shop_cart
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.guolala.zxx.entity.model.ShopCart">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into t_shop_cart (user_id, goods_id, quantity, 
+      create_time, create_by, update_time, 
+      update_by, deleted)
+    values (#{userId,jdbcType=INTEGER}, #{goodsId,jdbcType=INTEGER}, #{quantity,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{updateBy,jdbcType=VARCHAR}, #{deleted,jdbcType=BIT})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.guolala.zxx.entity.model.ShopCart">
+    update t_shop_cart
+    set user_id = #{userId,jdbcType=INTEGER},
+      goods_id = #{goodsId,jdbcType=INTEGER},
+      quantity = #{quantity,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_by = #{createBy,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_by = #{updateBy,jdbcType=VARCHAR},
+      deleted = #{deleted,jdbcType=BIT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, user_id, goods_id, quantity, create_time, create_by, update_time, update_by, 
+    deleted
+    from t_shop_cart
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, user_id, goods_id, quantity, create_time, create_by, update_time, update_by, 
+    deleted
+    from t_shop_cart
+  </select>
+
+  <select id="selectByUserIdAndGoodsId" resultMap="BaseResultMap">
+    select id, user_id, goods_id, quantity, create_time, create_by, update_time, update_by,
+    deleted
+    from t_shop_cart
+    where deleted = 0 and user_id = #{userId} and goods_id = #{goodsId}
+  </select>
+
+
+  <resultMap id="ShopCartVoMap" type="com.guolala.zxx.entity.vo.ShopCartVo">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="goods_id" jdbcType="INTEGER" property="goodsId" />
+    <result column="goods_status" jdbcType="INTEGER" property="goodsStatus" />
+    <result column="goods_name" jdbcType="VARCHAR" property="goodsName" />
+    <result column="goods_price" jdbcType="DECIMAL" property="goodsPrice" />
+    <result column="discount_price" jdbcType="DECIMAL" property="discountPrice" />
+    <result column="quantity" jdbcType="INTEGER" property="quantity" />
+  </resultMap>
+  <select id="selectUserShopCart" resultMap="ShopCartVoMap">
+    select t1.id, t1.user_id, t1.goods_id, t1.quantity,t2.goods_name,t2.goods_price,t2.discount_price,t2.goods_status
+    from t_shop_cart t1
+    left join t_goods t2
+    on t1.goods_id = t2.id
+    where t1.deleted = 0 and t1.user_id = #{userId} and t1.goods_id = #{goodsId}
+  </select>
+
+  <update id="updateToDelByUserId">
+    update t_shop_cart set deleted = 1 where user_id = #{userId}
+  </update>
+
+</mapper>

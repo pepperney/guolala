@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.guolala.zxx.dao.OrderExtendMapper">
+  <resultMap id="BaseResultMap" type="com.guolala.zxx.entity.model.OrderExtend">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="order_no" jdbcType="VARCHAR" property="orderNo" />
+    <result column="receiver_name" jdbcType="VARCHAR" property="receiverName" />
+    <result column="receiver_mobile" jdbcType="VARCHAR" property="receiverMobile" />
+    <result column="addr_province" jdbcType="VARCHAR" property="addrProvince" />
+    <result column="addr_city" jdbcType="VARCHAR" property="addrCity" />
+    <result column="addr_district" jdbcType="VARCHAR" property="addrDistrict" />
+    <result column="addr_details" jdbcType="VARCHAR" property="addrDetails" />
+    <result column="order_remark" jdbcType="VARCHAR" property="orderRemark" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+    <result column="deleted" jdbcType="BIT" property="deleted" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_order_extend
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.guolala.zxx.entity.model.OrderExtend">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into t_order_extend (order_no, receiver_name, receiver_mobile, 
+      addr_province, addr_city, addr_district, 
+      addr_details, order_remark, create_time, 
+      create_by, update_time, update_by, 
+      deleted)
+    values (#{orderNo,jdbcType=VARCHAR}, #{receiverName,jdbcType=VARCHAR}, #{receiverMobile,jdbcType=VARCHAR}, 
+      #{addrProvince,jdbcType=VARCHAR}, #{addrCity,jdbcType=VARCHAR}, #{addrDistrict,jdbcType=VARCHAR}, 
+      #{addrDetails,jdbcType=VARCHAR}, #{orderRemark,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{createBy,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, 
+      #{deleted,jdbcType=BIT})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.guolala.zxx.entity.model.OrderExtend">
+    update t_order_extend
+    set order_no = #{orderNo,jdbcType=VARCHAR},
+      receiver_name = #{receiverName,jdbcType=VARCHAR},
+      receiver_mobile = #{receiverMobile,jdbcType=VARCHAR},
+      addr_province = #{addrProvince,jdbcType=VARCHAR},
+      addr_city = #{addrCity,jdbcType=VARCHAR},
+      addr_district = #{addrDistrict,jdbcType=VARCHAR},
+      addr_details = #{addrDetails,jdbcType=VARCHAR},
+      order_remark = #{orderRemark,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_by = #{createBy,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_by = #{updateBy,jdbcType=VARCHAR},
+      deleted = #{deleted,jdbcType=BIT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, order_no, receiver_name, receiver_mobile, addr_province, addr_city, addr_district, 
+    addr_details, order_remark, create_time, create_by, update_time, update_by, deleted
+    from t_order_extend
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, order_no, receiver_name, receiver_mobile, addr_province, addr_city, addr_district, 
+    addr_details, order_remark, create_time, create_by, update_time, update_by, deleted
+    from t_order_extend
+  </select>
+
+  <select id="selectByOrderNo" resultMap="BaseResultMap">
+    select id, order_no, receiver_name, receiver_mobile, addr_province, addr_city, addr_district,
+    addr_details, order_remark, create_time, create_by, update_time, update_by, deleted
+    from t_order_extend where deleted = 0 and order_no = #{orderNo}
+  </select>
+</mapper>
