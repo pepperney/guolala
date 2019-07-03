@@ -36,7 +36,7 @@ spring:
 config:
   file: classpath:config/config.properties
 logging:
-   path: logs
+   path: /home/nulo/logs/${spring.application.name}
 
 ---
 spring:
