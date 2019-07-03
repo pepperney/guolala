@@ -42,8 +42,8 @@ logging:
 spring:
   profiles: online
 config:
-  file: /home/pepper/configs/${spring.application.name}/config.properties
+  file: /home/nulo/configs/${spring.application.name}/config.properties
 logging:
-   path: /home/pepper/logs/${spring.application.name}
+   path: /home/nulo/logs/${spring.application.name}
 
 
