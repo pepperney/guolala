@@ -42,7 +42,7 @@ logging:
 spring:
   profiles: online
 config:
-  file: /home/nulo/configs/${spring.application.name}/config.properties
+  file: file:/home/nulo/configs/${spring.application.name}/config.properties
 logging:
    path: /home/nulo/logs/${spring.application.name}
 
