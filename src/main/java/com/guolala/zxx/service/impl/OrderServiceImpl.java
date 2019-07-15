@@ -19,18 +19,21 @@ import com.guolala.zxx.entity.param.OrderParam;
 import com.guolala.zxx.entity.vo.OrderCreateVo;
 import com.guolala.zxx.entity.vo.OrderPayVo;
 import com.guolala.zxx.entity.vo.OrderVo;
+import com.guolala.zxx.entity.wx.WxUnifiedOrderReq;
+import com.guolala.zxx.entity.wx.WxUnifiedOrderResp;
 import com.guolala.zxx.exception.GLLException;
 import com.guolala.zxx.service.OrderService;
-import com.guolala.zxx.util.BeanUtil;
-import com.guolala.zxx.util.GUtil;
-import com.guolala.zxx.util.RedisUtil;
-import com.guolala.zxx.util.ValidateUtil;
+import com.guolala.zxx.util.*;
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
+import com.thoughtworks.xstream.io.xml.XmlFriendlyNameCoder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 
@@ -52,6 +55,17 @@ public class OrderServiceImpl implements OrderService {
     private OrderExtendMapper orderExtendMapper;
     @Autowired
     private RedisUtil redisUtil;
+    @Value("${wx.appid}")
+    private String appId;
+    @Value("${wx.pay.key}")
+    private String wxPayKey;
+    @Value("${wx.pay.merchantId}")
+    private String wxPayMerchantId;
+    @Value("${wx.pay.url}")
+    private String wxPayUrl;
+    @Value("${wx.pay.notifyUrl=}")
+    private String wxPayNotifyUrl;
+    private static final XStream xstream = new XStream(new DomDriver("UTF-8", new XmlFriendlyNameCoder("_-", "_")));
 
 
     @Override
@@ -134,6 +148,26 @@ public class OrderServiceImpl implements OrderService {
     public OrderVo queryOrderStatus(Integer userId, String orderNo) {
         Order order = this.queryOrderInfo(orderNo);
         return BeanUtil.copyProperties(order, OrderVo.class);
+    }
+
+    @Override
+    public String getPayId(String openId, WxUnifiedOrderReq req, HttpServletRequest request) {
+        req.setAppid(appId);
+        req.setMch_id(wxPayMerchantId);
+        req.setNonce_str(GUtil.getUUID());
+        /*req.setSign();
+        req.setBody();
+        req.setOut_trade_no();
+        req.setTotal_fee();*/
+        req.setSpbill_create_ip(GUtil.getIpAddr(request));
+        req.setTime_start(DateUtil.getFormatDate(new Date(),"yyyyMMddHHmmss"));
+        req.setNotify_url(wxPayNotifyUrl);
+        req.setOpenid(openId);
+        xstream.alias("wxUnifiedOrderReq", WxUnifiedOrderReq.class);
+        String xml = xstream.toXML(req);
+        String result = HttpUtil.post(wxPayUrl, xml, "text/xml");
+        WxUnifiedOrderResp resp = (WxUnifiedOrderResp) xstream.fromXML(result);
+        return null;
     }
 
 

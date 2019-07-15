@@ -1,21 +1,19 @@
 package com.guolala.zxx.service.impl;
 
-import com.guolala.zxx.constant.Const;
-import com.guolala.zxx.constant.SysCode;
-import com.guolala.zxx.constant.UserStatus;
-import com.guolala.zxx.constant.UserType;
+import com.guolala.zxx.constant.*;
 import com.guolala.zxx.dao.UserMapper;
+import com.guolala.zxx.entity.UserInfo;
 import com.guolala.zxx.entity.model.User;
 import com.guolala.zxx.entity.vo.UserVo;
+import com.guolala.zxx.entity.wx.WxLoginResp;
 import com.guolala.zxx.exception.GLLException;
 import com.guolala.zxx.service.UserService;
-import com.guolala.zxx.util.BeanUtil;
-import com.guolala.zxx.util.GUtil;
-import com.guolala.zxx.util.RedisUtil;
-import com.guolala.zxx.util.ValidateUtil;
+import com.guolala.zxx.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
@@ -33,6 +31,14 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
     @Autowired
     private RedisUtil redisUtil;
+    @Value("${wx.appid}")
+    private String appId;
+    @Value("${wx.appsecret}")
+    private String appSecret;
+    @Value("${wx.loginUrl}")
+    private String loginUrl;
+
+
 
     @Override
     public User getUserInfo(UserVo userVo) {
@@ -67,15 +73,56 @@ public class UserServiceImpl implements UserService {
             throw new GLLException(SysCode.USER_ERROR);
         }
         String token = GUtil.getTokenStr(user.getId());
-        log.info("手机号:{}对应的token={}",user.getId(),token);
+        log.info("手机号:{}对应的token={}", user.getId(), token);
         response.addHeader(Const.TOKEN, token);
         return user;
+    }
+
+    @Override
+    public UserInfo wxLogin(String jsCode, HttpServletResponse response) {
+        String url = loginUrl.replace("JSCODE", jsCode);
+        String result = HttpUtil.get(url, null, null);
+        log.info("调用微信登录接口{}返回{}", url, result);
+        if (StringUtils.isEmpty(result)) {
+            throw new GLLException(SysCode.WX_LOGIN_FAIL);
+        }
+        WxLoginResp wxLoginResp = JsonUtil.jsonToObject(result, WxLoginResp.class);
+        if (!Const.ZERO_STR.equals(wxLoginResp.getErrcode())) {
+            throw new GLLException(SysCode.WX_LOGIN_FAIL);
+        }
+        String openId = wxLoginResp.getOpenid();
+        String sessionKey = wxLoginResp.getSession_key();
+        // 缓存sessionKey
+        redisUtil.setex(RedisKey.WX_SESSION.key + openId, RedisKey.WX_SESSION.expireTime, sessionKey);
+        String userToken = GUtil.getTokenStr(openId, sessionKey);
+        // 根据openId查询用户，不存在时注册用户
+        User user = User.builder().wxOpenid(openId).build();
+        User exsitUser = userMapper.selectUser(user);
+        if (null == exsitUser) {
+            user.setUserStatus(UserStatus.NORMAL.getCode());
+            user.setUserType(UserType.COMMON.getCode());
+            user.setCreateTime(new Date());
+            user.setUpdateTime(new Date());
+            userMapper.insert(user);
+            exsitUser = user;
+        }
+        // 缓存token和用户关系
+        redisUtil.setex(RedisKey.TOKEN.key + userToken, RedisKey.TOKEN.expireTime, JsonUtil.toJson(exsitUser));
+        // 返回token给客户端
+        response.addHeader(Const.TOKEN, userToken);
+        return BeanUtil.copyProperties(exsitUser,UserInfo.class);
+    }
+
+    @Override
+    public void updUserInfo(UserVo userVo, UserInfo userInfo) {
+        userVo.setId(userInfo.getId());
+        userVo.setWxOpenid(userInfo.getWxOpenid());
+        this.saveUser(BeanUtil.copyProperties(userVo,User.class));
     }
 
 
     private void saveUser(User user) {
         if (user == null) return;
-        ValidateUtil.validateParam(user);
         if (null == user.getId()) {
             user.setCreateTime(new Date());
             user.setUpdateTime(new Date());
@@ -85,4 +132,6 @@ public class UserServiceImpl implements UserService {
             userMapper.updateByPrimaryKey(user);
         }
     }
+
+
 }

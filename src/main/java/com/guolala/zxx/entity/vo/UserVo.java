@@ -13,7 +13,7 @@ import java.io.Serializable;
  * @Description:
  */
 @Data
-@ApiModel
+@ApiModel("用户请求对象")
 public class UserVo implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -28,7 +28,9 @@ public class UserVo implements Serializable {
     @ApiModelProperty(value = "用户密码", notes = "")
     private String password;
 
-    @NotEmpty(message = "手机号不能为空")
+    @ApiModelProperty(value = "用户性别", notes = "")
+    private String gender;
+
     @ApiModelProperty(value = "用户手机号", notes = "")
     private String mobile;
 

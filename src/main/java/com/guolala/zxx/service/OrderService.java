@@ -5,8 +5,9 @@ import com.guolala.zxx.entity.UserInfo;
 import com.guolala.zxx.entity.vo.OrderCreateVo;
 import com.guolala.zxx.entity.vo.OrderPayVo;
 import com.guolala.zxx.entity.vo.OrderVo;
+import com.guolala.zxx.entity.wx.WxUnifiedOrderReq;
 
-import java.math.BigDecimal;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @Author: pei.nie
@@ -57,7 +58,7 @@ public interface OrderService {
      * @param orderPayVo
      * @return
      */
-    boolean payForOrder(UserInfo user,OrderPayVo orderPayVo);
+    boolean payForOrder(UserInfo user, OrderPayVo orderPayVo);
 
     /**
      * 查询订单状态
@@ -67,6 +68,16 @@ public interface OrderService {
      * @return
      */
     OrderVo queryOrderStatus(Integer userId, String orderNo);
+
+    /**
+     * 微信支付统一下单接口
+     *
+     * @param openId
+     * @param wxUnifiedOrderReq
+     * @return
+     * @see https://pay.weixin.qq.com/wiki/doc/api/wxa/wxa_api.php?chapter=9_1&index=1
+     */
+    String getPayId(String openId, WxUnifiedOrderReq wxUnifiedOrderReq, HttpServletRequest request);
 
 
 }

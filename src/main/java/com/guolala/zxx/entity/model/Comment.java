@@ -7,7 +7,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
 
-@ApiModel("用户对象")
+@ApiModel("评论对象")
 @Data
 public class Comment implements Serializable {
     private Integer id;

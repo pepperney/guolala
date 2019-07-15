@@ -16,6 +16,8 @@ public enum  RedisKey {
     ORDER_NO                    (RedisKey.PREFIX + "orderNo_", 10 * Const.MINUTE_TIME),
 
     USER_ADDRESS                (RedisKey.PREFIX + "user_address_", 7 * Const.DAY_TIME),
+
+    WX_SESSION                  (RedisKey.PREFIX + "wx_session_", 24 * Const.HOUR_TIME),
     ;
 
     /** global redis key prefix */

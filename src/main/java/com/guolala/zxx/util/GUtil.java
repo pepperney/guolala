@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.guolala.zxx.entity.CommonResp;
 import com.guolala.zxx.support.GFilter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -42,6 +43,11 @@ public class GUtil {
      */
     public static String getTokenStr(Integer userId) {
         String token = TOKEN_PREFIX + userId + getUUID();
+        return token;
+    }
+
+    public static String getTokenStr(String openId, String sessionKey) {
+        String token = TOKEN_PREFIX + MD5Util.md5(openId + sessionKey);
         return token;
     }
 
@@ -156,4 +162,30 @@ public class GUtil {
     public static String encrytStr(String str) {
         return AESUtil.encryptData(str, DEFAULT_PASSWORD);
     }
+
+
+    /**
+     * 获取ip
+     *
+     * @param request
+     * @return
+     */
+    public static String getIpAddr(HttpServletRequest request) {
+        String ip = request.getHeader("X-Forwarded-For");
+        if (!StringUtils.isEmpty(ip) && !"unKnown".equalsIgnoreCase(ip)) {
+            //多次反向代理后会有多个ip值，第一个ip才是真实ip
+            int index = ip.indexOf(",");
+            if (index != -1) {
+                return ip.substring(0, index);
+            } else {
+                return ip;
+            }
+        }
+        ip = request.getHeader("X-Real-IP");
+        if (!StringUtils.isEmpty(ip) && !"unKnown".equalsIgnoreCase(ip)) {
+            return ip;
+        }
+        return request.getRemoteAddr();
+    }
+
 }

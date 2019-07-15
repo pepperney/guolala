@@ -2,6 +2,7 @@ package com.guolala.zxx.entity.model;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -9,6 +10,7 @@ import java.util.Date;
 
 @Data
 @ApiModel(value = "用户对象")
+@Builder
 public class User implements Serializable {
     private Integer id;
 
@@ -20,6 +22,9 @@ public class User implements Serializable {
 
     @ApiModelProperty(value = "用户密码", notes = "")
     private String password;
+
+    @ApiModelProperty(value = "用户性别", notes = "")
+    private String gender;
 
     @ApiModelProperty(value = "用户手机号", notes = "")
     private String mobile;
@@ -65,32 +70,6 @@ public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append(" [");
-        sb.append("Hash = ").append(hashCode());
-        sb.append(", id=").append(id);
-        sb.append(", nickName=").append(nickName);
-        sb.append(", realName=").append(realName);
-        sb.append(", password=").append(password);
-        sb.append(", mobile=").append(mobile);
-        sb.append(", identNo=").append(identNo);
-        sb.append(", email=").append(email);
-        sb.append(", userStatus=").append(userStatus);
-        sb.append(", userType=").append(userType);
-        sb.append(", wxOpenid=").append(wxOpenid);
-        sb.append(", wxName=").append(wxName);
-        sb.append(", wxHeadimage=").append(wxHeadimage);
-        sb.append(", invitedBy=").append(invitedBy);
-        sb.append(", createTime=").append(createTime);
-        sb.append(", createBy=").append(createBy);
-        sb.append(", updateTime=").append(updateTime);
-        sb.append(", updateBy=").append(updateBy);
-        sb.append(", deleted=").append(deleted);
-        sb.append(", serialVersionUID=").append(serialVersionUID);
-        sb.append("]");
-        return sb.toString();
-    }
+
+
 }

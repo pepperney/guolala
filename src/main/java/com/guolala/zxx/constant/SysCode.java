@@ -13,7 +13,7 @@ public enum SysCode {
 
     SYS_ERROR                       ("1000", "系统异常"),
     SYS_BUSY                        ("1001", "系统繁忙"),
-    SYS_DOING                      ("1002", "请求处理中，请勿重复提交"),
+    SYS_DOING                       ("1002", "请求处理中，请勿重复提交"),
     ILLEGAL_PARAM                   ("1003", "参数检验不通过"),
 
     ENCRYPT_ERROR                   ("1004", "加密异常"),
@@ -25,6 +25,7 @@ public enum SysCode {
     USER_ERROR                      ("2002", "用户名或密码不正确"),
     USER_REGISTED                   ("2003", "用户已注册，请直接登录"),
     USER_NOT_EXIST                  ("2004", "用户不存在"),
+    WX_LOGIN_FAIL                 ("2015", "登录失败,请重试"),
 
     FILE_NOT_FOUND                  ("2010", "文件不存在"),
     FILE_UPLOAD_FAIL                ("2011", "文件上传失败"),
