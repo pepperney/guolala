@@ -1,4 +1,4 @@
-package com.guolala.zxx.entity.vo;
+package com.guolala.zxx.entity.req;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -14,7 +14,7 @@ import java.math.BigDecimal;
  */
 @Data
 @ApiModel
-public class GoodsVo implements Serializable {
+public class GoodsReq implements Serializable {
 
     private static final long serialVersionUID = -5844954811407577372L;
 

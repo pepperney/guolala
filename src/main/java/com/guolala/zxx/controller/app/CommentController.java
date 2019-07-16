@@ -3,7 +3,6 @@ package com.guolala.zxx.controller.app;
 import com.github.pagehelper.PageInfo;
 import com.guolala.zxx.entity.UserInfo;
 import com.guolala.zxx.entity.model.Comment;
-import com.guolala.zxx.entity.vo.GoodsVo;
 import com.guolala.zxx.service.CommentService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

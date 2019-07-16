@@ -1,7 +1,7 @@
 package com.guolala.zxx.support;
 
 import com.guolala.zxx.constant.Const;
-import com.guolala.zxx.entity.vo.UserVo;
+import com.guolala.zxx.entity.req.UserReq;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -19,7 +19,7 @@ public class UserInfoResolver implements HandlerMethodArgumentResolver {
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return UserVo.class.equals(parameter.getParameterType());
+        return UserReq.class.equals(parameter.getParameterType());
     }
 
     @Override

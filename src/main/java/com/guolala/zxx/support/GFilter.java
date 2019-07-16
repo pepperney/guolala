@@ -9,15 +9,13 @@ import com.guolala.zxx.constant.Const;
 import com.guolala.zxx.constant.RedisKey;
 import com.guolala.zxx.constant.SysCode;
 import com.guolala.zxx.entity.CommonResp;
-import com.guolala.zxx.entity.vo.UserVo;
+import com.guolala.zxx.entity.req.UserReq;
 import com.guolala.zxx.exception.GLLException;
 import com.guolala.zxx.util.GUtil;
 import com.guolala.zxx.util.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
-import org.apache.ibatis.logging.LogException;
 import org.slf4j.MDC;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.CollectionUtils;
@@ -195,11 +193,11 @@ public class GFilter extends OncePerRequestFilter {
         }
         response.addHeader(Const.TOKEN, token);
         String cacheUser = redisUtil.get(RedisKey.TOKEN.key + token);
-        UserVo userVo = JSON.parseObject(cacheUser, UserVo.class);
-        if (StringUtils.isEmpty(cacheUser) || null == userVo) {
+        UserReq userReq = JSON.parseObject(cacheUser, UserReq.class);
+        if (StringUtils.isEmpty(cacheUser) || null == userReq) {
             throw new GLLException(SysCode.TOKEN_EXPIRE);
         }
-        request.setAttribute(Const.CACHE_USER_KEY, userVo);
+        request.setAttribute(Const.CACHE_USER_KEY, userReq);
 
     }
 

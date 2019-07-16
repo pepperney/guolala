@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
+import com.guolala.zxx.constant.Const;
 import com.guolala.zxx.constant.OrderStatus;
 import com.guolala.zxx.constant.RedisKey;
 import com.guolala.zxx.constant.SysCode;
@@ -16,11 +17,11 @@ import com.guolala.zxx.entity.model.Order;
 import com.guolala.zxx.entity.model.OrderExtend;
 import com.guolala.zxx.entity.model.OrderGoods;
 import com.guolala.zxx.entity.param.OrderParam;
-import com.guolala.zxx.entity.vo.OrderCreateVo;
-import com.guolala.zxx.entity.vo.OrderPayVo;
-import com.guolala.zxx.entity.vo.OrderVo;
-import com.guolala.zxx.entity.wx.WxUnifiedOrderReq;
-import com.guolala.zxx.entity.wx.WxUnifiedOrderResp;
+import com.guolala.zxx.entity.resp.OrderPayResp;
+import com.guolala.zxx.entity.req.OrderCreateReq;
+import com.guolala.zxx.entity.req.OrderPayReq;
+import com.guolala.zxx.entity.req.OrderReq;
+import com.guolala.zxx.entity.wx.*;
 import com.guolala.zxx.exception.GLLException;
 import com.guolala.zxx.service.OrderService;
 import com.guolala.zxx.util.*;
@@ -34,8 +35,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -63,8 +71,10 @@ public class OrderServiceImpl implements OrderService {
     private String wxPayMerchantId;
     @Value("${wx.pay.url}")
     private String wxPayUrl;
-    @Value("${wx.pay.notifyUrl=}")
+    @Value("${wx.pay.notifyUrl}")
     private String wxPayNotifyUrl;
+    @Value("${wx.pay.queryUrl}")
+    private String wxPayQueryUrl;
     private static final XStream xstream = new XStream(new DomDriver("UTF-8", new XmlFriendlyNameCoder("_-", "_")));
 
 
@@ -74,27 +84,27 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderVo queryOrderDetail(Integer userId, String orderNo) {
+    public OrderReq queryOrderDetail(Integer userId, String orderNo) {
         return null;
     }
 
     @Override
     @Transactional
-    public String createOrder(UserInfo user, OrderCreateVo orderCreateVo) {
-        log.info("订单[]创建入参={}", JSON.toJSONString(orderCreateVo));
-        ValidateUtil.validateParam(orderCreateVo);
-        ValidateUtil.validateParam(orderCreateVo.getGoodsInfoList());
-        String key = RedisKey.ORDER_NO + orderCreateVo.getOrderNo();
+    public String createOrder(UserInfo user, OrderCreateReq orderCreateReq) {
+        log.info("订单[]创建入参={}", JSON.toJSONString(orderCreateReq));
+        ValidateUtil.validateParam(orderCreateReq);
+        ValidateUtil.validateParam(orderCreateReq.getGoodsInfoList());
+        String key = RedisKey.ORDER_NO + orderCreateReq.getOrderNo();
         // 先查数据库，如果数据库存在，表示已提交并入库，直接返回成功
-        if (null != this.queryOrderInfo(orderCreateVo.getOrderNo())) {
-            return orderCreateVo.getOrderNo();
+        if (null != this.queryOrderInfo(orderCreateReq.getOrderNo())) {
+            return orderCreateReq.getOrderNo();
         }
         // 如果数据库没有，则表示未入库或者上次提交未执行完，如果缓存有则表示重复请求，不再处理
         if (!StringUtils.isEmpty(redisUtil.get(key))) {
             throw new GLLException(SysCode.SYS_DOING);
         }
-        redisUtil.setex(key, RedisKey.ORDER_NO.expireTime, orderCreateVo.getOrderNo());
-        Order order = BeanUtil.copyProperties(orderCreateVo, Order.class);
+        redisUtil.setex(key, RedisKey.ORDER_NO.expireTime, orderCreateReq.getOrderNo());
+        Order order = BeanUtil.copyProperties(orderCreateReq, Order.class);
         order.setCreateTime(new Date());
         order.setUpdateTime(new Date());
         order.setOrderStatus(OrderStatus.PRE_ORDER.getCode());
@@ -102,15 +112,15 @@ public class OrderServiceImpl implements OrderService {
         order.setUserNickName(user.getNickName());
         order.setUserPhone(user.getMobile());
         List<OrderGoods> orderGoodsList = Lists.newArrayList();
-        orderCreateVo.getGoodsInfoList().stream().forEach(obj -> {
+        orderCreateReq.getGoodsInfoList().stream().forEach(obj -> {
             OrderGoods orderGoods = BeanUtil.copyProperties(obj, OrderGoods.class);
             orderGoods.setCreateTime(new Date());
             orderGoods.setUpdateTime(new Date());
             orderGoods.setDeleted(Boolean.FALSE);
-            orderGoods.setOrderNo(orderCreateVo.getOrderNo());
+            orderGoods.setOrderNo(orderCreateReq.getOrderNo());
             orderGoodsList.add(orderGoods);
         });
-        OrderExtend orderExtend = BeanUtil.copyProperties(orderCreateVo, OrderExtend.class);
+        OrderExtend orderExtend = BeanUtil.copyProperties(orderCreateReq, OrderExtend.class);
         orderExtend.setCreateTime(new Date());
         orderExtend.setUpdateTime(new Date());
         orderExtend.setDeleted(Boolean.FALSE);
@@ -118,10 +128,10 @@ public class OrderServiceImpl implements OrderService {
             orderMapper.insert(order);
             orderGoodsList.stream().forEach(obj -> orderGoodsMapper.insert(obj));
             orderExtendMapper.insert(orderExtend);
-            log.info("订单[{}]创建成功", orderCreateVo.getOrderNo());
-            return orderCreateVo.getOrderNo();
+            log.info("订单[{}]创建成功", orderCreateReq.getOrderNo());
+            return orderCreateReq.getOrderNo();
         } catch (Exception e) {
-            log.error("订单[{}]创建失败", orderCreateVo.getOrderNo(), e);
+            log.error("订单[{}]创建失败", orderCreateReq.getOrderNo(), e);
             throw new GLLException(SysCode.ORDER_CREATE_FAIL);
         } finally {
             redisUtil.del(key);
@@ -130,44 +140,152 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public PageInfo<OrderVo> getOrderListByPage(Integer userId, Integer orderStatus, int pageNum, int pageSize) {
+    public PageInfo<OrderReq> getOrderListByPage(Integer userId, Integer orderStatus, int pageNum, int pageSize) {
         PageHelper.startPage(pageNum, pageSize);
         OrderParam orderQueryParam = new OrderParam.Builder().userId(userId).orderStatus(orderStatus).build();
         orderQueryParam.setUserId(userId);
         orderQueryParam.setOrderStatus(orderStatus);
-        List<OrderVo> list = BeanUtil.copyBeans(this.queryOrderList(orderQueryParam), OrderVo.class);
+        List<OrderReq> list = BeanUtil.copyBeans(this.queryOrderList(orderQueryParam), OrderReq.class);
         return new PageInfo<>(list);
     }
 
     @Override
-    public boolean payForOrder(UserInfo user, OrderPayVo orderPayVo) {
-        return false;
-    }
-
-    @Override
-    public OrderVo queryOrderStatus(Integer userId, String orderNo) {
+    public OrderReq queryOrderStatus(Integer userId, String orderNo) {
         Order order = this.queryOrderInfo(orderNo);
-        return BeanUtil.copyProperties(order, OrderVo.class);
+        return BeanUtil.copyProperties(order, OrderReq.class);
     }
 
     @Override
-    public String getPayId(String openId, WxUnifiedOrderReq req, HttpServletRequest request) {
+    public OrderPayResp wxPay(OrderPayReq orderPayReq, UserInfo userInfo, HttpServletRequest request) {
+        ValidateUtil.validateParam(orderPayReq);
+        String orderNo = orderPayReq.getOrderNo();
+        Order order = orderMapper.selectOrderInfo(orderNo);
+        if (null == order) {
+            throw new GLLException(SysCode.ORDER_NOT_EXIST);
+        }
+        WxUnifiedOrderReq req = new WxUnifiedOrderReq();
         req.setAppid(appId);
         req.setMch_id(wxPayMerchantId);
         req.setNonce_str(GUtil.getUUID());
-        /*req.setSign();
-        req.setBody();
-        req.setOut_trade_no();
-        req.setTotal_fee();*/
+        req.setBody("订单-" + orderNo);
+        req.setOut_trade_no(orderNo);
+        req.setTotal_fee(Integer.parseInt(order.getPayAmt()) * 100);
         req.setSpbill_create_ip(GUtil.getIpAddr(request));
-        req.setTime_start(DateUtil.getFormatDate(new Date(),"yyyyMMddHHmmss"));
+        req.setTime_start(DateUtil.getFormatDate(new Date(), "yyyyMMddHHmmss"));
         req.setNotify_url(wxPayNotifyUrl);
-        req.setOpenid(openId);
-        xstream.alias("wxUnifiedOrderReq", WxUnifiedOrderReq.class);
+        req.setOpenid(userInfo.getWxOpenid());
+        req.setSign(WxPayUtil.sign(WxPayUtil.beanToSortString(req), wxPayKey).toUpperCase());
+        xstream.alias("req", WxUnifiedOrderReq.class);
         String xml = xstream.toXML(req);
+        log.info("调用微信统一下单接口入参={},url={},订单号={}", xml, wxPayUrl, orderNo);
         String result = HttpUtil.post(wxPayUrl, xml, "text/xml");
+        log.info("调用微信统一下单接口出参={},url={},订单号={}", result, wxPayUrl, orderNo);
+        if (StringUtils.isEmpty(result)) {
+            throw new GLLException(SysCode.ORDER_PAY_FAIL);
+        }
         WxUnifiedOrderResp resp = (WxUnifiedOrderResp) xstream.fromXML(result);
-        return null;
+        if (Const.FAIL.equals(resp.getReturn_code()) || Const.FAIL.equals(resp.getResult_code())) {
+            throw new GLLException(SysCode.ORDER_PAY_FAIL, StringUtils.isEmpty(resp.getErr_code_des()) ? resp.getReturn_msg() : resp.getErr_code_des());
+        }
+        OrderPayResp orderPayResp = new OrderPayResp();
+        orderPayResp.setAppid(appId);
+        orderPayResp.setNonceStr(req.getNonce_str());
+        orderPayResp.setPackages("prepay_id=" + resp.getPrepay_id());
+        orderPayResp.setTimeStamp(String.valueOf(System.currentTimeMillis() / 1000));
+        //再次签名，这个签名用于小程序端调用wx.requesetPayment方法
+        String text = "appId=" + appId
+                + "&nonceStr=" + req.getNonce_str()
+                + "&package=prepay_id=" + resp.getPrepay_id()
+                + "&signType=MD5&timeStamp=" + orderPayResp.getTimeStamp();
+        String paySign = WxPayUtil.sign(text, wxPayKey).toUpperCase();
+        orderPayResp.setPaySign(paySign);
+        return orderPayResp;
+    }
+
+    @Override
+    public void handleWxNotify(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        Map<String, String> resultMap = new HashMap<>();
+        resultMap.put("return_code", Const.FAIL);
+        resultMap.put("return_msg", "ERROR");
+        StringBuilder sb = new StringBuilder();
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream()))) {
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+            br.close();
+        }
+        String notityXml = sb.toString();
+        WxPayNotifyReq payNotifyReq = (WxPayNotifyReq) xstream.fromXML(notityXml);
+        log.info("收到微信支付通知消息,orderNo={},msg={}", payNotifyReq.getOut_trade_no(), JsonUtil.toJson(payNotifyReq));
+        String returnCode = payNotifyReq.getReturn_code();
+        if (Const.SUCCESS.equals(returnCode)) {
+            //回调验签时需要去除sign和空值参数
+            Map<String, String> validParams = WxPayUtil.filtParam(payNotifyReq);
+            String text = WxPayUtil.beanToSortString(validParams);
+            //验证签名是否正确
+            if (WxPayUtil.verifySign(text, payNotifyReq.getSign(), wxPayKey)) {
+                String orderNo = payNotifyReq.getOut_trade_no();
+                Order order = orderMapper.selectOrderInfo(orderNo);
+                // 仅当订单状态为待支付才继续处理--可以避免重复通知
+                if (null != order && order.getOrderStatus().equals(OrderStatus.TO_PAY.getCode())) {
+                    // 验证返回的金额与系统订单的金额是否一致
+                    if (Integer.parseInt(order.getPayAmt()) * 100 != payNotifyReq.getTotal_fee()) {
+                        resultMap.put("return_code", Const.FAIL);
+                        resultMap.put("return_msg", "金额不一致");
+                    }
+                    // 更新订单状态为待发货(已支付)
+                    order.setOrderStatus(OrderStatus.TO_SEND.getCode());
+                    order.setUpdateTime(new Date());
+                    orderMapper.updateByPrimaryKey(order);
+                    resultMap.put("return_code", Const.SUCCESS);
+                    resultMap.put("return_msg", "OK");
+                }
+            } else {
+                resultMap.put("return_msg", "验签失败");
+            }
+        } else {
+            resultMap.put("return_msg", "通知报文为空");
+        }
+        String resultXml = xstream.toXML(resultMap);
+        try (BufferedOutputStream out = new BufferedOutputStream(response.getOutputStream())) {
+            out.write(resultXml.getBytes());
+            out.flush();
+        }
+    }
+
+    @Override
+    public Boolean queryPayResult(String orderNo, UserInfo userInfo) {
+        Order order = orderMapper.selectOrderInfo(orderNo);
+        if (null == order) {
+            throw new GLLException(SysCode.ORDER_NOT_EXIST);
+        }
+        WxPayQueryReq wxPayQueryReq = new WxPayQueryReq();
+        wxPayQueryReq.setAppid(appId);
+        wxPayQueryReq.setMch_id(wxPayMerchantId);
+        wxPayQueryReq.setOut_trade_no(orderNo);
+        wxPayQueryReq.setNonce_str(GUtil.getUUID());
+        wxPayQueryReq.setSign(WxPayUtil.sign(WxPayUtil.beanToSortString(wxPayQueryReq), wxPayKey).toUpperCase());
+        String xml = xstream.toXML(wxPayQueryReq);
+        log.info("调用微信支付查询接口入参={},url={},订单号={}", xml, wxPayQueryUrl, orderNo);
+        String result = HttpUtil.post(wxPayQueryUrl, xml, "text/xml");
+        log.info("调用微信支付查询接口出参={},url={},订单号={}", result, wxPayQueryUrl, orderNo);
+        if (StringUtils.isEmpty(result)) {
+            throw new GLLException(SysCode.ORDER_PAY_QUERY_FAIL);
+        }
+        WxPayQueryResp resp = (WxPayQueryResp) xstream.fromXML(result);
+        if (Const.FAIL.equals(resp.getReturn_code()) || Const.FAIL.equals(resp.getResult_code())) {
+            throw new GLLException(SysCode.ORDER_PAY_QUERY_FAIL, StringUtils.isEmpty(resp.getErr_code_des()) ? resp.getReturn_msg() : resp.getErr_code_des());
+        }
+        // 交易成功
+        if (!Const.SUCCESS.equals(resp.getTrade_state())) return false;
+        // 当订单状态为待支付时更新为待发货(已支付)
+        if (order.getOrderStatus().equals(OrderStatus.TO_PAY.getCode())) {
+            order.setOrderStatus(OrderStatus.TO_SEND.getCode());
+            order.setUpdateTime(new Date());
+            orderMapper.updateByPrimaryKey(order);
+        }
+        return true;
     }
 
 
@@ -210,20 +328,20 @@ public class OrderServiceImpl implements OrderService {
      * @param orderNo
      * @return
      */
-    private OrderVo queryOrderDetail(String orderNo) {
-        OrderVo orderVo = null;
+    private OrderReq queryOrderDetail(String orderNo) {
+        OrderReq orderReq = null;
         Order order = this.queryOrderInfo(orderNo);
         if (null == order) {
-            return orderVo;
+            return orderReq;
         }
-        orderVo = BeanUtil.copyProperties(order, OrderVo.class);
+        orderReq = BeanUtil.copyProperties(order, OrderReq.class);
         OrderExtend orderExtend = orderExtendMapper.selectByOrderNo(orderNo);
         if (null != orderExtend) {
-            BeanUtil.copyProperties(orderExtend, orderVo);
+            BeanUtil.copyProperties(orderExtend, orderReq);
         }
         List<OrderGoods> orderGoodsList = orderGoodsMapper.selectByOrderNo(orderNo);
-        orderVo.setOrderGoodsList(orderGoodsList);
-        return orderVo;
+        orderReq.setOrderGoodsList(orderGoodsList);
+        return orderReq;
     }
 
     /**

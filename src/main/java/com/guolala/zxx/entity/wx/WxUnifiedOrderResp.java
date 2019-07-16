@@ -1,12 +1,14 @@
 package com.guolala.zxx.entity.wx;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 /**
  * @Author: pei.nie
  * @Date:2019/7/15
  * @Description:
  */
+@Data
 public class WxUnifiedOrderResp {
 
     @ApiModelProperty(value = "返回状态码", required = true, notes = "")

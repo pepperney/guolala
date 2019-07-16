@@ -1,4 +1,4 @@
-package com.guolala.zxx.entity.vo;
+package com.guolala.zxx.entity.req;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -17,7 +17,7 @@ import java.util.List;
  */
 @Data
 @ApiModel
-public class OrderCreateVo {
+public class OrderCreateReq {
 
     @NotEmpty(message = "订单号不能为空")
     @ApiModelProperty(value = "订单编号")

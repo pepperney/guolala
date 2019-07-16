@@ -4,7 +4,7 @@ import com.guolala.zxx.constant.Const;
 import com.guolala.zxx.constant.SysCode;
 import com.guolala.zxx.dao.CategoryMapper;
 import com.guolala.zxx.entity.model.Category;
-import com.guolala.zxx.entity.vo.CategoryVo;
+import com.guolala.zxx.entity.req.CategoryReq;
 import com.guolala.zxx.exception.GLLException;
 import com.guolala.zxx.service.CategoryService;
 import com.guolala.zxx.util.BeanUtil;
@@ -27,9 +27,9 @@ public class CategoryServiceImpl implements CategoryService {
     private CategoryMapper categoryMapper;
 
     @Override
-    public void saveCategory(CategoryVo categoryVo) {
-        ValidateUtil.validateParam(categoryVo);
-        Category category = BeanUtil.copyProperties(categoryVo, Category.class);
+    public void saveCategory(CategoryReq categoryReq) {
+        ValidateUtil.validateParam(categoryReq);
+        Category category = BeanUtil.copyProperties(categoryReq, Category.class);
         if (null == category.getId()) {
             // 新增品类
             if (null == category.getParentId()) {

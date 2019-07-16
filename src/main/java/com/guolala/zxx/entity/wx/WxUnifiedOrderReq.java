@@ -47,7 +47,7 @@ public class WxUnifiedOrderReq {
     private String fee_type = "CNY";
 
     @ApiModelProperty(value = "标价金额", required = true, notes = "")
-    private String total_fee;
+    private int total_fee;
 
     @ApiModelProperty(value = "终端IP", required = true, notes = "")
     private String spbill_create_ip;

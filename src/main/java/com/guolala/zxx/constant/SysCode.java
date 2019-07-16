@@ -25,7 +25,7 @@ public enum SysCode {
     USER_ERROR                      ("2002", "用户名或密码不正确"),
     USER_REGISTED                   ("2003", "用户已注册，请直接登录"),
     USER_NOT_EXIST                  ("2004", "用户不存在"),
-    WX_LOGIN_FAIL                 ("2015", "登录失败,请重试"),
+    WX_LOGIN_FAIL                   ("2015", "登录失败,请重试"),
 
     FILE_NOT_FOUND                  ("2010", "文件不存在"),
     FILE_UPLOAD_FAIL                ("2011", "文件上传失败"),
@@ -35,6 +35,9 @@ public enum SysCode {
     ORDER_STATUS_ERROR              ("3001", "订单状态异常"),
     ORDER_REPEAT                    ("3002", "订单已存在"),
     ORDER_CREATE_FAIL               ("3003", "订单创建失败"),
+    ORDER_PAY_FAIL                  ("3004", "订单支付失败"),
+    ORDER_PAY_QUERY_FAIL            ("3005", "订单支付结果查询失败"),
+
 
 
 

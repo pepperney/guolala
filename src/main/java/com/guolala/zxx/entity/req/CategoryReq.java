@@ -1,4 +1,4 @@
-package com.guolala.zxx.entity.vo;
+package com.guolala.zxx.entity.req;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -13,7 +13,7 @@ import javax.validation.constraints.NotEmpty;
  */
 @Data
 @ApiModel
-public class CategoryVo {
+public class CategoryReq {
 
 
     private Integer id;

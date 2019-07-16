@@ -2,7 +2,7 @@ package com.guolala.zxx.controller.web;
 
 import com.github.pagehelper.PageInfo;
 import com.guolala.zxx.entity.param.GoodsParam;
-import com.guolala.zxx.entity.vo.GoodsVo;
+import com.guolala.zxx.entity.req.GoodsReq;
 import com.guolala.zxx.service.GoodsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -25,8 +25,8 @@ public class GoodsManageController {
 
     @PostMapping("/save")
     @ApiOperation(value = "保存商品", httpMethod = "POST", notes = "")
-    public void saveGoods(@RequestBody GoodsVo goodsVo) {
-        goodsService.saveGoods(goodsVo);
+    public void saveGoods(@RequestBody GoodsReq goodsReq) {
+        goodsService.saveGoods(goodsReq);
     }
 
 
@@ -40,9 +40,9 @@ public class GoodsManageController {
      */
     @GetMapping("/list")
     @ApiOperation(value = "查询商品列表", httpMethod = "GET", notes = "")
-    public PageInfo<GoodsVo> getGoodsListByPage(@ApiParam(name = "categoryNo", value = "品类编码") String categoryNo,
-                                                @ApiParam(name = "pageNum", value = "分页的页码") @RequestParam(defaultValue = "1") Integer pageNum,
-                                                @ApiParam(name = "pageSize", value = "每页条数") Integer pageSize) {
+    public PageInfo<GoodsReq> getGoodsListByPage(@ApiParam(name = "categoryNo", value = "品类编码") String categoryNo,
+                                                 @ApiParam(name = "pageNum", value = "分页的页码") @RequestParam(defaultValue = "1") Integer pageNum,
+                                                 @ApiParam(name = "pageSize", value = "每页条数") Integer pageSize) {
         return goodsService.getGoodsListByPage(categoryNo, pageNum, pageSize);
     }
 
@@ -54,7 +54,7 @@ public class GoodsManageController {
      */
     @GetMapping("/goodsDetail")
     @ApiOperation(value = "查询商品详情", httpMethod = "GET", notes = "")
-    public GoodsVo getGoodsDetail(@ApiParam(name = "goodsId", value = "商品id") Integer goodsId) {
+    public GoodsReq getGoodsDetail(@ApiParam(name = "goodsId", value = "商品id") Integer goodsId) {
         return goodsService.getGoodsDetail(goodsId);
     }
 
@@ -66,7 +66,7 @@ public class GoodsManageController {
      */
     @PostMapping("/search")
     @ApiOperation(value = "搜索商品", httpMethod = "POST", notes = "")
-    public PageInfo<GoodsVo> serachGoodsListByPage(@RequestBody GoodsParam goodsParam) {
+    public PageInfo<GoodsReq> serachGoodsListByPage(@RequestBody GoodsParam goodsParam) {
         return goodsService.searchGoodsByPage(goodsParam);
     }
 

@@ -2,8 +2,7 @@ package com.guolala.zxx.service;
 
 import com.github.pagehelper.PageInfo;
 import com.guolala.zxx.entity.param.GoodsParam;
-import com.guolala.zxx.entity.vo.GoodsVo;
-import org.springframework.web.bind.annotation.RequestBody;
+import com.guolala.zxx.entity.req.GoodsReq;
 
 /**
  * @Author: pei.nie
@@ -19,25 +18,25 @@ public interface GoodsService {
      * @param pageSize
      * @return
      */
-    PageInfo<GoodsVo> getGoodsListByPage(String categoryNo, Integer pageNum, Integer pageSize);
+    PageInfo<GoodsReq> getGoodsListByPage(String categoryNo, Integer pageNum, Integer pageSize);
 
     /**
      * 查看商品详情
      * @param goodsId
      * @return
      */
-    GoodsVo getGoodsDetail(Integer goodsId);
+    GoodsReq getGoodsDetail(Integer goodsId);
 
     /**
      * 搜索商品
      * @param goodsParam
      * @return
      */
-    PageInfo<GoodsVo> searchGoodsByPage(GoodsParam goodsParam);
+    PageInfo<GoodsReq> searchGoodsByPage(GoodsParam goodsParam);
 
     /**
      * 保存商品
-     * @param goodsVo
+     * @param goodsReq
      */
-    void saveGoods(GoodsVo goodsVo);
+    void saveGoods(GoodsReq goodsReq);
 }

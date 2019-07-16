@@ -59,7 +59,7 @@
   </select>
 
 
-  <resultMap id="ShopCartVoMap" type="com.guolala.zxx.entity.vo.ShopCartVo">
+  <resultMap id="ShopCartVoMap" type="com.guolala.zxx.entity.req.ShopCartReq">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="goods_id" jdbcType="INTEGER" property="goodsId" />
     <result column="goods_status" jdbcType="INTEGER" property="goodsStatus" />

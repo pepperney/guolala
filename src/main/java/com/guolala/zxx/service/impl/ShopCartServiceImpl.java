@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.guolala.zxx.constant.RedisKey;
 import com.guolala.zxx.dao.ShopCartMapper;
 import com.guolala.zxx.entity.model.ShopCart;
-import com.guolala.zxx.entity.vo.ShopCartVo;
+import com.guolala.zxx.entity.req.ShopCartReq;
 import com.guolala.zxx.service.ShopCartService;
 import com.guolala.zxx.util.BeanUtil;
 import com.guolala.zxx.util.JsonUtil;
@@ -34,12 +34,12 @@ public class ShopCartServiceImpl implements ShopCartService {
     private RedisUtil redisUtil;
 
     @Override
-    public void addToCart(Integer userId, ShopCartVo shopCartVo) {
-        ValidateUtil.validateParam(shopCartVo);
-        ShopCart shopCart = BeanUtil.copyProperties(shopCartVo, ShopCart.class);
-        ShopCart existShopCart = shopCartMapper.selectByUserIdAndGoodsId(userId, shopCartVo.getGoodsId());
+    public void addToCart(Integer userId, ShopCartReq shopCartReq) {
+        ValidateUtil.validateParam(shopCartReq);
+        ShopCart shopCart = BeanUtil.copyProperties(shopCartReq, ShopCart.class);
+        ShopCart existShopCart = shopCartMapper.selectByUserIdAndGoodsId(userId, shopCartReq.getGoodsId());
         if (null != existShopCart) {
-            existShopCart.setQuantity(shopCartVo.getQuantity());
+            existShopCart.setQuantity(shopCartReq.getQuantity());
             existShopCart.setUpdateTime(new Date());
             shopCartMapper.updateByPrimaryKey(existShopCart);
         }
@@ -50,11 +50,11 @@ public class ShopCartServiceImpl implements ShopCartService {
     }
 
     @Override
-    public void removeFromCart(Integer userId, ShopCartVo shopCartVo) {
-        ValidateUtil.validateParam(shopCartVo);
-        ShopCart existShopCart = shopCartMapper.selectByUserIdAndGoodsId(userId, shopCartVo.getGoodsId());
+    public void removeFromCart(Integer userId, ShopCartReq shopCartReq) {
+        ValidateUtil.validateParam(shopCartReq);
+        ShopCart existShopCart = shopCartMapper.selectByUserIdAndGoodsId(userId, shopCartReq.getGoodsId());
         if (null != existShopCart) {
-            existShopCart.setQuantity(shopCartVo.getQuantity());
+            existShopCart.setQuantity(shopCartReq.getQuantity());
             existShopCart.setUpdateTime(new Date());
             existShopCart.setDeleted(Boolean.TRUE);
             shopCartMapper.updateByPrimaryKey(existShopCart);
@@ -67,12 +67,12 @@ public class ShopCartServiceImpl implements ShopCartService {
     }
 
     @Override
-    public List<ShopCartVo> listCart(Integer userId) {
-        List<ShopCartVo> list = null;
+    public List<ShopCartReq> listCart(Integer userId) {
+        List<ShopCartReq> list = null;
         String key = RedisKey.USER_SHOP_CART.key + userId;
         String cacheValue = redisUtil.get(key);
         if (!StringUtils.isEmpty(cacheValue)) {
-            list = JsonUtil.jsonToGenericObject(cacheValue, new TypeReference<List<ShopCartVo>>() {
+            list = JsonUtil.jsonToGenericObject(cacheValue, new TypeReference<List<ShopCartReq>>() {
             });
         } else {
             list = shopCartMapper.selectUserShopCart(userId);

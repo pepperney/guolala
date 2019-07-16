@@ -2,12 +2,14 @@ package com.guolala.zxx.service;
 
 import com.github.pagehelper.PageInfo;
 import com.guolala.zxx.entity.UserInfo;
-import com.guolala.zxx.entity.vo.OrderCreateVo;
-import com.guolala.zxx.entity.vo.OrderPayVo;
-import com.guolala.zxx.entity.vo.OrderVo;
-import com.guolala.zxx.entity.wx.WxUnifiedOrderReq;
+import com.guolala.zxx.entity.resp.OrderPayResp;
+import com.guolala.zxx.entity.req.OrderCreateReq;
+import com.guolala.zxx.entity.req.OrderPayReq;
+import com.guolala.zxx.entity.req.OrderReq;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * @Author: pei.nie
@@ -29,16 +31,16 @@ public interface OrderService {
      * @param orderNo
      * @return
      */
-    OrderVo queryOrderDetail(Integer userId, String orderNo);
+    OrderReq queryOrderDetail(Integer userId, String orderNo);
 
     /**
      * 用户提交订单
      *
      * @param user
-     * @param orderCreateVo
+     * @param orderCreateReq
      * @return
      */
-    String createOrder(UserInfo user, OrderCreateVo orderCreateVo);
+    String createOrder(UserInfo user, OrderCreateReq orderCreateReq);
 
     /**
      * 分页查询用户订单列表
@@ -49,16 +51,7 @@ public interface OrderService {
      * @param pageSize
      * @return
      */
-    PageInfo<OrderVo> getOrderListByPage(Integer userId, Integer orderStatus, int pageNum, int pageSize);
-
-    /**
-     * 用户支付订单
-     *
-     * @param user
-     * @param orderPayVo
-     * @return
-     */
-    boolean payForOrder(UserInfo user, OrderPayVo orderPayVo);
+    PageInfo<OrderReq> getOrderListByPage(Integer userId, Integer orderStatus, int pageNum, int pageSize);
 
     /**
      * 查询订单状态
@@ -67,17 +60,30 @@ public interface OrderService {
      * @param orderNo
      * @return
      */
-    OrderVo queryOrderStatus(Integer userId, String orderNo);
+    OrderReq queryOrderStatus(Integer userId, String orderNo);
 
     /**
      * 微信支付统一下单接口
-     *
-     * @param openId
-     * @param wxUnifiedOrderReq
+     * @param orderPayReq
+     * @param userInfo
+     * @param request
      * @return
      * @see https://pay.weixin.qq.com/wiki/doc/api/wxa/wxa_api.php?chapter=9_1&index=1
      */
-    String getPayId(String openId, WxUnifiedOrderReq wxUnifiedOrderReq, HttpServletRequest request);
+    OrderPayResp wxPay(OrderPayReq orderPayReq, UserInfo userInfo, HttpServletRequest request);
 
+    /**
+     * 处理微信支付回调通知
+     * @param request
+     * @param response
+     */
+    void handleWxNotify(HttpServletRequest request, HttpServletResponse response)throws IOException;
 
+    /**
+     * 查询微信支付结果
+     * @param orderNo
+     * @param userInfo
+     * @return
+     */
+    Boolean queryPayResult(String orderNo, UserInfo userInfo);
 }

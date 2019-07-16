@@ -1,6 +1,6 @@
 package com.guolala.zxx.controller.web;
 
-import com.guolala.zxx.entity.vo.FileUploadVo;
+import com.guolala.zxx.entity.req.FileUploadReq;
 import com.guolala.zxx.service.FileService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -35,8 +35,8 @@ public class FileManageController {
     @PostMapping("/upload")
     @ResponseBody
     @ApiOperation(value = "文件上传", httpMethod = "POST", notes = "使用base64方式提交文件内容")
-    public String upload(@RequestBody FileUploadVo fileUploadVo) {
-        String fileId = fileService.upload(fileUploadVo);
+    public String upload(@RequestBody FileUploadReq fileUploadReq) {
+        String fileId = fileService.upload(fileUploadReq);
         return fileId;
     }
 

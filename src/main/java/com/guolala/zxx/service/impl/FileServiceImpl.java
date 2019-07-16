@@ -3,7 +3,7 @@ package com.guolala.zxx.service.impl;
 import com.guolala.zxx.constant.SysCode;
 import com.guolala.zxx.dao.AttachmentMapper;
 import com.guolala.zxx.entity.model.Attachment;
-import com.guolala.zxx.entity.vo.FileUploadVo;
+import com.guolala.zxx.entity.req.FileUploadReq;
 import com.guolala.zxx.exception.GLLException;
 import com.guolala.zxx.service.FileService;
 import com.guolala.zxx.util.GUtil;
@@ -19,8 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.util.Base64;
 import java.util.Date;
@@ -42,20 +40,20 @@ public class FileServiceImpl implements FileService {
 
 
     @Override
-    public String upload(FileUploadVo fileUploadVo) {
-        ValidateUtil.validateParam(fileUploadVo);
-        if (StringUtils.isEmpty(fileUploadVo.getFileName()) && StringUtils.isEmpty(fileUploadVo.getFileSuffix())) {
+    public String upload(FileUploadReq fileUploadReq) {
+        ValidateUtil.validateParam(fileUploadReq);
+        if (StringUtils.isEmpty(fileUploadReq.getFileName()) && StringUtils.isEmpty(fileUploadReq.getFileSuffix())) {
             throw new GLLException(SysCode.ILLEGAL_PARAM, "文件后缀不能为空");
         }
-        String fileData = fileUploadVo.getFileData();
+        String fileData = fileUploadReq.getFileData();
         fileData = fileData.replace("\r\n", "");
         Base64.Decoder decoder = Base64.getDecoder();
         byte[] bytes = decoder.decode(fileData);//将字符串转换成文件流
-        String filename = fileUploadVo.getFileName();
+        String filename = fileUploadReq.getFileName();
         if (StringUtils.isEmpty(filename)) {
-            filename = GUtil.getUUID() + "." + fileUploadVo.getFileSuffix().replace(".", "");
+            filename = GUtil.getUUID() + "." + fileUploadReq.getFileSuffix().replace(".", "");
         }
-        String filePath = fileDirectory + File.separator + fileUploadVo.getBizType() + File.separator + filename;
+        String filePath = fileDirectory + File.separator + fileUploadReq.getBizType() + File.separator + filename;
         File file = new File(filePath);
         try (InputStream is = new ByteArrayInputStream(bytes); OutputStream os = new FileOutputStream(file);) {
             byte temp[] = new byte[1024];
@@ -68,8 +66,8 @@ public class FileServiceImpl implements FileService {
             throw new GLLException(SysCode.FILE_UPLOAD_FAIL);
         }
         Attachment attachment = new Attachment();
-        attachment.setBizNo(fileUploadVo.getBizNo());
-        attachment.setBizType(fileUploadVo.getBizType());
+        attachment.setBizNo(fileUploadReq.getBizNo());
+        attachment.setBizType(fileUploadReq.getBizType());
         attachment.setFilePath(filePath);
         attachment.setCreateTime(new Date());
         Integer fileId = attachmentMapper.insert(attachment);

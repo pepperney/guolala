@@ -1,7 +1,7 @@
 package com.guolala.zxx.controller.web;
 
 import com.guolala.zxx.entity.model.Category;
-import com.guolala.zxx.entity.vo.CategoryVo;
+import com.guolala.zxx.entity.req.CategoryReq;
 import com.guolala.zxx.service.CategoryService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -27,8 +27,8 @@ public class CategoryManageController {
 
     @PostMapping("/saveCategory")
     @ApiOperation(value = "保存品类", httpMethod = "POST", notes = "新增或者更新使用")
-    public void saveCateGory(@RequestBody CategoryVo categoryVo) {
-        categoryService.saveCategory(categoryVo);
+    public void saveCateGory(@RequestBody CategoryReq categoryReq) {
+        categoryService.saveCategory(categoryReq);
 
     }
 

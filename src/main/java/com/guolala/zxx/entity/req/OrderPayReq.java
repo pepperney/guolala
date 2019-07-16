@@ -1,11 +1,10 @@
-package com.guolala.zxx.entity.vo;
+package com.guolala.zxx.entity.req;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.annotations.ApiParam;
 import lombok.Data;
 
-import java.math.BigDecimal;
+import javax.validation.constraints.NotEmpty;
 
 /**
  * @Author: pei.nie
@@ -14,11 +13,12 @@ import java.math.BigDecimal;
  */
 @Data
 @ApiModel(value = "订单支付对象")
-public class OrderPayVo {
+public class OrderPayReq {
 
     @ApiModelProperty(value = "订单编号")
+    @NotEmpty(message = "订单号不能为空")
     private String orderNo;
 
-    @ApiParam(value = "支付金额")
-    private BigDecimal payAmount;
+    @ApiModelProperty(value = "支付金额")
+    private String payAmount;
 }

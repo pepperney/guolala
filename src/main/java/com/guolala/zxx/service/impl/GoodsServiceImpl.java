@@ -5,7 +5,7 @@ import com.github.pagehelper.PageInfo;
 import com.guolala.zxx.dao.GoodsMapper;
 import com.guolala.zxx.entity.model.Goods;
 import com.guolala.zxx.entity.param.GoodsParam;
-import com.guolala.zxx.entity.vo.GoodsVo;
+import com.guolala.zxx.entity.req.GoodsReq;
 import com.guolala.zxx.service.GoodsService;
 import com.guolala.zxx.util.BeanUtil;
 import com.guolala.zxx.util.ValidateUtil;
@@ -30,31 +30,31 @@ public class GoodsServiceImpl implements GoodsService {
 
 
     @Override
-    public PageInfo<GoodsVo> getGoodsListByPage(String categoryNo, Integer pageNum, Integer pageSize) {
+    public PageInfo<GoodsReq> getGoodsListByPage(String categoryNo, Integer pageNum, Integer pageSize) {
         PageHelper.startPage(pageNum, pageSize);
         GoodsParam goodsParam = new GoodsParam(categoryNo);
-        List<GoodsVo> list = BeanUtil.copyBeans(this.getGoodsList(goodsParam), GoodsVo.class);
+        List<GoodsReq> list = BeanUtil.copyBeans(this.getGoodsList(goodsParam), GoodsReq.class);
         return new PageInfo<>(list);
     }
 
     @Override
-    public GoodsVo getGoodsDetail(Integer goodsId) {
+    public GoodsReq getGoodsDetail(Integer goodsId) {
         Goods goods = this.selectGoodsInfo(goodsId);
-        GoodsVo goodsVo = BeanUtil.copyProperties(goods, GoodsVo.class);
-        return goodsVo;
+        GoodsReq goodsReq = BeanUtil.copyProperties(goods, GoodsReq.class);
+        return goodsReq;
     }
 
     @Override
-    public PageInfo<GoodsVo> searchGoodsByPage(GoodsParam goodsParam) {
+    public PageInfo<GoodsReq> searchGoodsByPage(GoodsParam goodsParam) {
         PageHelper.startPage(goodsParam.getPageNum(), goodsParam.getPageSize());
-        List<GoodsVo> list = BeanUtil.copyBeans(this.getGoodsList(goodsParam), GoodsVo.class);
+        List<GoodsReq> list = BeanUtil.copyBeans(this.getGoodsList(goodsParam), GoodsReq.class);
         return new PageInfo<>(list);
     }
 
     @Override
-    public void saveGoods(GoodsVo goodsVo) {
-        ValidateUtil.validateParam(goodsVo);
-        Goods goods = BeanUtil.copyProperties(goodsVo, Goods.class);
+    public void saveGoods(GoodsReq goodsReq) {
+        ValidateUtil.validateParam(goodsReq);
+        Goods goods = BeanUtil.copyProperties(goodsReq, Goods.class);
         if (null == goods.getId()) {
             goods.setCreateTime(new Date());
             goods.setUpdateTime(new Date());

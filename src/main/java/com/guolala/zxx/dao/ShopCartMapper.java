@@ -1,7 +1,7 @@
 package com.guolala.zxx.dao;
 
 import com.guolala.zxx.entity.model.ShopCart;
-import com.guolala.zxx.entity.vo.ShopCartVo;
+import com.guolala.zxx.entity.req.ShopCartReq;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ public interface ShopCartMapper {
 
     int updateByPrimaryKey(ShopCart record);
 
-    List<ShopCartVo> selectUserShopCart(Integer userId);
+    List<ShopCartReq> selectUserShopCart(Integer userId);
 
     ShopCart selectByUserIdAndGoodsId(Integer userId, Integer goodsId);
 

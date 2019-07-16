@@ -1,10 +1,9 @@
-package com.guolala.zxx.entity.vo;
+package com.guolala.zxx.entity.req;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 
 /**
@@ -14,7 +13,7 @@ import java.io.Serializable;
  */
 @Data
 @ApiModel("用户请求对象")
-public class UserVo implements Serializable {
+public class UserReq implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Integer id;

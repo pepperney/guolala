@@ -1,4 +1,4 @@
-package com.guolala.zxx.entity.vo;
+package com.guolala.zxx.entity.req;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -13,7 +13,7 @@ import javax.validation.constraints.NotEmpty;
  */
 @Data
 @ApiModel
-public class FileUploadVo {
+public class FileUploadReq {
 
     @ApiModelProperty(value = "文件名称")
     private String fileName;

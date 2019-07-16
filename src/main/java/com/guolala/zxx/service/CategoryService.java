@@ -1,7 +1,7 @@
 package com.guolala.zxx.service;
 
 import com.guolala.zxx.entity.model.Category;
-import com.guolala.zxx.entity.vo.CategoryVo;
+import com.guolala.zxx.entity.req.CategoryReq;
 
 import java.util.List;
 
@@ -15,9 +15,9 @@ public interface CategoryService {
     /**
      * 新增/修改品类
      *
-     * @param categoryVo
+     * @param categoryReq
      */
-    void saveCategory(CategoryVo categoryVo);
+    void saveCategory(CategoryReq categoryReq);
 
     /**
      * 删除品类

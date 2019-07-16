@@ -1,6 +1,6 @@
 package com.guolala.zxx.service;
 
-import com.guolala.zxx.entity.vo.FileUploadVo;
+import com.guolala.zxx.entity.req.FileUploadReq;
 import org.springframework.http.ResponseEntity;
 
 /**
@@ -13,10 +13,10 @@ public interface FileService {
     /**
      * 文件上传
      *
-     * @param fileUploadVo
+     * @param fileUploadReq
      * @return
      */
-    String upload(FileUploadVo fileUploadVo);
+    String upload(FileUploadReq fileUploadReq);
 
     /**
      * 文件下载

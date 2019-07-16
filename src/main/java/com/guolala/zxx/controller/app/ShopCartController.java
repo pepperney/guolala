@@ -1,7 +1,7 @@
 package com.guolala.zxx.controller.app;
 
 import com.guolala.zxx.entity.UserInfo;
-import com.guolala.zxx.entity.vo.ShopCartVo;
+import com.guolala.zxx.entity.req.ShopCartReq;
 import com.guolala.zxx.service.ShopCartService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -28,24 +28,24 @@ public class ShopCartController {
      * 添加到购物车
      *
      * @param userInfo
-     * @param shopCartVo
+     * @param shopCartReq
      */
     @PostMapping("/v1/add")
     @ApiOperation(value = "添加到购物车", httpMethod = "GET")
-    public void addToCart(@ApiIgnore UserInfo userInfo, @RequestBody ShopCartVo shopCartVo) {
-        shopCartService.addToCart(userInfo.getId(), shopCartVo);
+    public void addToCart(@ApiIgnore UserInfo userInfo, @RequestBody ShopCartReq shopCartReq) {
+        shopCartService.addToCart(userInfo.getId(), shopCartReq);
     }
 
     /**
      * 从购物车删除
      *
      * @param userInfo
-     * @param shopCartVo
+     * @param shopCartReq
      */
     @PostMapping("/v1/remove")
     @ApiOperation(value = "从购物车删除商品", httpMethod = "POST")
-    public void removeFromCart(@ApiIgnore UserInfo userInfo, @RequestBody ShopCartVo shopCartVo) {
-        shopCartService.removeFromCart(userInfo.getId(), shopCartVo);
+    public void removeFromCart(@ApiIgnore UserInfo userInfo, @RequestBody ShopCartReq shopCartReq) {
+        shopCartService.removeFromCart(userInfo.getId(), shopCartReq);
     }
 
     /**
@@ -67,8 +67,8 @@ public class ShopCartController {
      */
     @GetMapping("/v1/list")
     @ApiOperation(value = "查询购物车列表", httpMethod = "GET")
-    public List<ShopCartVo> getMyShopCartList(@ApiIgnore UserInfo userInfo) {
-        List<ShopCartVo> list = shopCartService.listCart(userInfo.getId());
+    public List<ShopCartReq> getMyShopCartList(@ApiIgnore UserInfo userInfo) {
+        List<ShopCartReq> list = shopCartService.listCart(userInfo.getId());
         return list;
     }
 

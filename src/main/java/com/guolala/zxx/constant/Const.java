@@ -18,6 +18,9 @@ public interface Const {
     int ZERO = 0;
     int ONE = 1;
 
+    String SUCCESS = "SUCCESS";
+    String FAIL = "FAIL";
+
     String ZERO_STR = "0";
     String ONE_STR = "1";
 

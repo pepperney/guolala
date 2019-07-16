@@ -4,7 +4,7 @@ import com.guolala.zxx.constant.*;
 import com.guolala.zxx.dao.UserMapper;
 import com.guolala.zxx.entity.UserInfo;
 import com.guolala.zxx.entity.model.User;
-import com.guolala.zxx.entity.vo.UserVo;
+import com.guolala.zxx.entity.req.UserReq;
 import com.guolala.zxx.entity.wx.WxLoginResp;
 import com.guolala.zxx.exception.GLLException;
 import com.guolala.zxx.service.UserService;
@@ -41,35 +41,35 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public User getUserInfo(UserVo userVo) {
-        ValidateUtil.validateParam(userVo);
-        User user = userMapper.selectUser(BeanUtil.copyProperties(userVo, User.class));
+    public User getUserInfo(UserReq userReq) {
+        ValidateUtil.validateParam(userReq);
+        User user = userMapper.selectUser(BeanUtil.copyProperties(userReq, User.class));
         return user;
     }
 
     @Override
-    public void userRegist(UserVo userVo) {
-        if (null == userVo) {
+    public void userRegist(UserReq userReq) {
+        if (null == userReq) {
             throw new GLLException(SysCode.ILLEGAL_PARAM, "用户信息不能为空");
         }
-        ValidateUtil.validateParam(userVo);
-        User user = BeanUtil.copyProperties(userVo, User.class);
+        ValidateUtil.validateParam(userReq);
+        User user = BeanUtil.copyProperties(userReq, User.class);
         User existUser = userMapper.selectUser(user);
         if (null != existUser) {
             throw new GLLException(SysCode.USER_REGISTED);
         }
         user.setUserStatus(UserStatus.NORMAL.getCode());
         user.setUserType(UserType.COMMON.getCode());
-        user.setPassword(GUtil.getPassWord(userVo.getPassword()));
+        user.setPassword(GUtil.getPassWord(userReq.getPassword()));
         this.saveUser(user);
     }
 
     @Override
-    public User userLogin(UserVo userVo, HttpServletResponse response) {
-        ValidateUtil.validateParam(userVo);
-        userVo.setPassword(GUtil.getPassWord(userVo.getPassword()));
-        User user = userMapper.selectUser(BeanUtil.copyProperties(userVo, User.class));
-        if (null == userVo) {
+    public User userLogin(UserReq userReq, HttpServletResponse response) {
+        ValidateUtil.validateParam(userReq);
+        userReq.setPassword(GUtil.getPassWord(userReq.getPassword()));
+        User user = userMapper.selectUser(BeanUtil.copyProperties(userReq, User.class));
+        if (null == userReq) {
             throw new GLLException(SysCode.USER_ERROR);
         }
         String token = GUtil.getTokenStr(user.getId());
@@ -114,10 +114,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updUserInfo(UserVo userVo, UserInfo userInfo) {
-        userVo.setId(userInfo.getId());
-        userVo.setWxOpenid(userInfo.getWxOpenid());
-        this.saveUser(BeanUtil.copyProperties(userVo,User.class));
+    public void updUserInfo(UserReq userReq, UserInfo userInfo) {
+        userReq.setId(userInfo.getId());
+        userReq.setWxOpenid(userInfo.getWxOpenid());
+        this.saveUser(BeanUtil.copyProperties(userReq,User.class));
     }
 
 

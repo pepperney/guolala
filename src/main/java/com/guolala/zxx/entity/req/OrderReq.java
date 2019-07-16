@@ -1,14 +1,10 @@
-package com.guolala.zxx.entity.vo;
+package com.guolala.zxx.entity.req;
 
 import com.guolala.zxx.entity.model.OrderGoods;
-import com.guolala.zxx.entity.vo.OrderCreateVo.OrderGoodsInfo;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -20,7 +16,7 @@ import java.util.List;
  */
 @Data
 @ApiModel
-public class OrderVo {
+public class OrderReq {
 
 
     @ApiModelProperty(value = "订单编号")
