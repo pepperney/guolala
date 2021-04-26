@@ -23,7 +23,7 @@
         <fastjson.version>1.2.56</fastjson.version>
         <httpclient.version>4.5.2</httpclient.version>
         <guava.version>25.1-jre</guava.version>
-        <commons.io.version>2.4</commons.io.version>
+        <commons.io.version>2.7</commons.io.version>
         <page.version>1.2.10</page.version>
     </properties>
 
